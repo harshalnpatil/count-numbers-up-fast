@@ -20,33 +20,26 @@ const Counter = () => {
     countRef.current = 0;
     setCurrentCount(0);
 
-    const startTime = performance.now();
-    // Calculate duration based on target - larger numbers count faster per unit
-    const duration = Math.min(Math.max(target * 0.5, 500), 10000); // 0.5ms to 10s max
+    const frameInterval = 1000 / 33; // 33 fps = ~30ms per frame
+    let lastFrameTime = performance.now();
     
     const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+      const elapsed = currentTime - lastFrameTime;
       
-      // Easing function for smooth acceleration/deceleration
-      const easedProgress = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-      
-      const newCount = Math.floor(easedProgress * target);
-      
-      if (newCount !== countRef.current) {
-        countRef.current = newCount;
-        setCurrentCount(newCount);
+      if (elapsed >= frameInterval) {
+        lastFrameTime = currentTime - (elapsed % frameInterval);
+        countRef.current += 1;
+        setCurrentCount(countRef.current);
+        
+        if (countRef.current >= target) {
+          setCurrentCount(target);
+          setIsRunning(false);
+          setIsComplete(true);
+          return;
+        }
       }
 
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
-      } else {
-        setCurrentCount(target);
-        setIsRunning(false);
-        setIsComplete(true);
-      }
+      animationRef.current = requestAnimationFrame(animate);
     };
 
     animationRef.current = requestAnimationFrame(animate);
