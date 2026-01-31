@@ -1,10 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { Play, Square, RotateCcw } from "lucide-react";
 
 const Counter = () => {
   const [targetNumber, setTargetNumber] = useState<string>("1000");
+  const [fps, setFps] = useState<number>(33);
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isComplete, setIsComplete] = useState<boolean>(false);
@@ -20,7 +22,7 @@ const Counter = () => {
     countRef.current = 0;
     setCurrentCount(0);
 
-    const frameInterval = 1000 / 33; // 33 fps = ~30ms per frame
+    const frameInterval = 1000 / fps;
     let lastFrameTime = performance.now();
     
     const animate = (currentTime: number) => {
@@ -43,7 +45,7 @@ const Counter = () => {
     };
 
     animationRef.current = requestAnimationFrame(animate);
-  }, [targetNumber]);
+  }, [targetNumber, fps]);
 
   const stopCounting = useCallback(() => {
     if (animationRef.current) {
@@ -118,6 +120,29 @@ const Counter = () => {
           />
         </div>
 
+        {/* FPS Setting */}
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex justify-between items-center">
+            <label className="text-sm text-muted-foreground font-medium">
+              Speed (FPS):
+            </label>
+            <span className="text-sm font-mono text-foreground">{fps} fps</span>
+          </div>
+          <Slider
+            value={[fps]}
+            onValueChange={(value) => setFps(value[0])}
+            min={1}
+            max={120}
+            step={1}
+            disabled={isRunning}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>1 fps</span>
+            <span>120 fps</span>
+          </div>
+        </div>
+
         <div className="flex gap-3">
           {!isRunning ? (
             <Button
@@ -156,7 +181,7 @@ const Counter = () => {
 
       {/* Info */}
       <p className="text-muted-foreground text-sm text-center max-w-md">
-        The counter uses smooth animation at 60fps. Larger numbers will count faster to complete in a reasonable time.
+        Counting at {fps} fps. Time to count to {parseInt(targetNumber) || 0}: ~{((parseInt(targetNumber) || 0) / fps).toFixed(1)}s
       </p>
     </div>
   );
