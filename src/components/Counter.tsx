@@ -1,8 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Play, Square, RotateCcw, Settings } from "lucide-react";
+import { Play, Square, RotateCcw, Settings, ChevronDown } from "lucide-react";
 
 const Counter = () => {
   const [targetNumber, setTargetNumber] = useState<string>("100");
@@ -153,16 +152,21 @@ const Counter = () => {
           </Button>
         </div>
 
-        {/* Collapsible Settings */}
-        <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen} className="w-full">
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-              <Settings className="w-4 h-4" />
-              Settings
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-3">
-            <div className="flex items-center gap-3 justify-center">
+        {/* Simple Toggle Settings */}
+        <div className="w-full">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="gap-2 text-muted-foreground"
+            onClick={() => setSettingsOpen(!settingsOpen)}
+          >
+            <Settings className="w-4 h-4" />
+            Settings
+            <ChevronDown className={`w-4 h-4 transition-transform ${settingsOpen ? "rotate-180" : ""}`} />
+          </Button>
+          
+          {settingsOpen && (
+            <div className="mt-3 flex items-center gap-3 justify-center">
               <label className="text-sm text-muted-foreground">Speed:</label>
               <Input
                 type="number"
@@ -175,8 +179,8 @@ const Counter = () => {
               />
               <span className="text-sm text-muted-foreground">fps</span>
             </div>
-          </CollapsibleContent>
-        </Collapsible>
+          )}
+        </div>
       </div>
     </div>
   );
