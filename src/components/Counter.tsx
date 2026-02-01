@@ -133,17 +133,22 @@ const Counter = () => {
       </div>
 
       {/* Controls - simplified */}
-      <div className="flex flex-col items-center gap-3 md:gap-6 w-full max-w-sm">
-        <div className="flex gap-2 w-full">
-          <Input
-            type="text"
-            inputMode="numeric"
-            value={displayValue}
-            onChange={handleTargetChange}
-            placeholder="Type a number..."
-            disabled={isRunning || isPaused}
-            className="text-center text-xl md:text-2xl h-12 md:h-16 bg-input border-border input-glow transition-shadow duration-300 flex-1"
-          />
+      <div className="flex flex-col items-center gap-3 md:gap-6 w-full max-w-lg">
+        <div className="flex gap-2 w-full items-center justify-center flex-wrap">
+          <div className="relative inline-flex items-center">
+            <span className="invisible text-xl md:text-2xl px-3 py-2 whitespace-pre">
+              {displayValue || "000"}
+            </span>
+            <Input
+              type="text"
+              inputMode="numeric"
+              value={displayValue}
+              onChange={handleTargetChange}
+              placeholder="100"
+              disabled={isRunning || isPaused}
+              className="absolute inset-0 text-center text-xl md:text-2xl h-12 md:h-16 bg-input border-border input-glow transition-shadow duration-300 min-w-[80px]"
+            />
+          </div>
           {!isRunning ? (
             <Button
               onClick={startCounting}
