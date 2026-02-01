@@ -132,11 +132,13 @@ const Counter = () => {
         )}
       </div>
 
-      {/* Controls - simplified */}
-      <div className="flex flex-col items-center gap-3 md:gap-6 w-full max-w-lg">
-        <div className="flex gap-2 w-full items-center justify-center flex-wrap">
+      {/* Controls - kid-friendly */}
+      <div className="flex flex-col items-center gap-4 md:gap-6 w-full max-w-lg">
+        {/* Number input with label */}
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-lg text-muted-foreground">Count to:</span>
           <div className="relative inline-flex items-center">
-            <span className="invisible text-xl md:text-2xl px-3 py-2 whitespace-pre">
+            <span className="invisible text-2xl md:text-3xl px-4 py-3 whitespace-pre font-bold">
               {displayValue || "000"}
             </span>
             <Input
@@ -146,43 +148,46 @@ const Counter = () => {
               onChange={handleTargetChange}
               placeholder="100"
               disabled={isRunning || isPaused}
-              className="absolute inset-0 text-center text-xl md:text-2xl h-12 md:h-16 bg-input border-border input-glow transition-shadow duration-300 min-w-[80px]"
+              className="absolute inset-0 text-center text-2xl md:text-3xl h-14 md:h-18 bg-input border-2 border-border rounded-2xl input-glow transition-shadow duration-300 min-w-[100px] font-bold"
             />
           </div>
+        </div>
+
+        {/* Big colorful buttons */}
+        <div className="flex gap-4 items-center justify-center flex-wrap">
           {!isRunning ? (
-            <Button
+            <button
               onClick={startCounting}
-              size="lg"
-              className="gap-1 md:gap-2 px-4 md:px-10 h-12 md:h-16 text-lg md:text-xl font-bold counter-glow"
               disabled={!targetNumber || parseInt(targetNumber) <= 0}
+              className="flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-32 md:h-32 rounded-full bg-green-500 hover:bg-green-400 active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed border-4 border-green-300"
             >
-              <Play className="w-5 h-5 md:w-6 md:h-6" />
-              {isPaused ? "Resume" : "Go!"}
-            </Button>
+              <Play className="w-10 h-10 md:w-14 md:h-14 text-white fill-white" />
+              <span className="text-white text-sm md:text-lg font-bold">
+                {isPaused ? "Go!" : "Go!"}
+              </span>
+            </button>
           ) : (
-            <Button
+            <button
               onClick={pauseCounting}
-              size="lg"
-              variant="secondary"
-              className="gap-1 md:gap-2 px-4 md:px-10 h-12 md:h-16 text-lg md:text-xl font-bold"
+              className="flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-32 md:h-32 rounded-full bg-yellow-500 hover:bg-yellow-400 active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl border-4 border-yellow-300"
             >
-              <Pause className="w-5 h-5 md:w-6 md:h-6" />
-              Pause
-            </Button>
+              <Pause className="w-10 h-10 md:w-14 md:h-14 text-white fill-white" />
+              <span className="text-white text-sm md:text-lg font-bold">Wait</span>
+            </button>
           )}
-          <Button
+          
+          <button
             onClick={resetCounter}
-            size="lg"
-            variant="outline"
-            className="h-12 md:h-16 px-3 md:px-6"
             disabled={currentCount === 0 && !isPaused}
+            className="flex flex-col items-center justify-center gap-1 w-20 h-20 md:w-28 md:h-28 rounded-full bg-red-500 hover:bg-red-400 active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed border-4 border-red-300"
           >
-            <RotateCcw className="w-5 h-5 md:w-6 md:h-6" />
-          </Button>
+            <RotateCcw className="w-8 h-8 md:w-12 md:h-12 text-white" />
+            <span className="text-white text-xs md:text-base font-bold">Again</span>
+          </button>
         </div>
 
         {/* Simple Toggle Settings */}
-        <div className="w-full">
+        <div className="w-full flex justify-center">
           <Button 
             variant="ghost" 
             size="sm" 
@@ -193,23 +198,23 @@ const Counter = () => {
             Settings
             <ChevronDown className={`w-4 h-4 transition-transform ${settingsOpen ? "rotate-180" : ""}`} />
           </Button>
-          
-          {settingsOpen && (
-            <div className="mt-3 flex items-center gap-3 justify-center">
-              <label className="text-sm text-muted-foreground">Speed:</label>
-              <Input
-                type="number"
-                value={fpsInput}
-                onChange={(e) => handleFpsChange(e.target.value)}
-                disabled={isRunning}
-                className="w-20 text-center h-9"
-                min="1"
-                max="120"
-              />
-              <span className="text-sm text-muted-foreground">fps</span>
-            </div>
-          )}
         </div>
+          
+        {settingsOpen && (
+          <div className="flex items-center gap-3 justify-center">
+            <label className="text-sm text-muted-foreground">Speed:</label>
+            <Input
+              type="number"
+              value={fpsInput}
+              onChange={(e) => handleFpsChange(e.target.value)}
+              disabled={isRunning}
+              className="w-20 text-center h-9"
+              min="1"
+              max="120"
+            />
+            <span className="text-sm text-muted-foreground">fps</span>
+          </div>
+        )}
       </div>
     </div>
   );
