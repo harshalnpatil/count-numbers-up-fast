@@ -110,48 +110,48 @@ const Counter = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-10">
+    <div className="flex flex-col items-center justify-start min-h-[100dvh] p-4 pt-8 md:pt-0 md:justify-center gap-4 md:gap-10">
       {/* Header - simplified */}
-      <h1 className="text-4xl md:text-5xl font-bold text-foreground text-center">
+      <h1 className="text-2xl md:text-5xl font-bold text-foreground text-center">
         🔢 Let's Count!
       </h1>
 
       {/* Counter Display */}
       <div className="relative">
         <div 
-          className={`counter-display text-7xl md:text-9xl font-bold transition-colors duration-200 ${
+          className={`counter-display text-5xl md:text-9xl font-bold transition-colors duration-200 ${
             isComplete ? "text-primary" : isRunning ? "text-primary" : "text-foreground"
           }`}
         >
           {formatNumber(currentCount)}
         </div>
         {isComplete && (
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-primary text-2xl font-bold animate-pulse">
+          <div className="absolute -bottom-8 md:-bottom-10 left-1/2 -translate-x-1/2 text-primary text-xl md:text-2xl font-bold animate-pulse">
             🎉 Done!
           </div>
         )}
       </div>
 
       {/* Controls - simplified */}
-      <div className="flex flex-col items-center gap-6 w-full max-w-sm">
-        <Input
-          type="text"
-          value={displayValue}
-          onChange={handleTargetChange}
-          placeholder="Type a number..."
-          disabled={isRunning || isPaused}
-          className="text-center text-2xl h-16 bg-input border-border input-glow transition-shadow duration-300"
-        />
-
-        <div className="flex gap-3">
+      <div className="flex flex-col items-center gap-3 md:gap-6 w-full max-w-sm">
+        <div className="flex gap-2 w-full">
+          <Input
+            type="text"
+            inputMode="numeric"
+            value={displayValue}
+            onChange={handleTargetChange}
+            placeholder="Type a number..."
+            disabled={isRunning || isPaused}
+            className="text-center text-xl md:text-2xl h-12 md:h-16 bg-input border-border input-glow transition-shadow duration-300 flex-1"
+          />
           {!isRunning ? (
             <Button
               onClick={startCounting}
               size="lg"
-              className="gap-2 px-10 h-14 text-xl font-bold counter-glow"
+              className="gap-1 md:gap-2 px-4 md:px-10 h-12 md:h-16 text-lg md:text-xl font-bold counter-glow"
               disabled={!targetNumber || parseInt(targetNumber) <= 0}
             >
-              <Play className="w-6 h-6" />
+              <Play className="w-5 h-5 md:w-6 md:h-6" />
               {isPaused ? "Resume" : "Go!"}
             </Button>
           ) : (
@@ -159,21 +159,20 @@ const Counter = () => {
               onClick={pauseCounting}
               size="lg"
               variant="secondary"
-              className="gap-2 px-10 h-14 text-xl font-bold"
+              className="gap-1 md:gap-2 px-4 md:px-10 h-12 md:h-16 text-lg md:text-xl font-bold"
             >
-              <Pause className="w-6 h-6" />
+              <Pause className="w-5 h-5 md:w-6 md:h-6" />
               Pause
             </Button>
           )}
-          
           <Button
             onClick={resetCounter}
             size="lg"
             variant="outline"
-            className="h-14 px-6"
+            className="h-12 md:h-16 px-3 md:px-6"
             disabled={currentCount === 0 && !isPaused}
           >
-            <RotateCcw className="w-6 h-6" />
+            <RotateCcw className="w-5 h-5 md:w-6 md:h-6" />
           </Button>
         </div>
 
