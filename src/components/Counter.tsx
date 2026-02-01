@@ -1,18 +1,34 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Play, Square, RotateCcw, Settings, ChevronDown } from "lucide-react";
+import { Play, Pause, RotateCcw, Settings, ChevronDown } from "lucide-react";
 
 const Counter = () => {
   const [targetNumber, setTargetNumber] = useState<string>("100");
+  const [displayValue, setDisplayValue] = useState<string>("100");
   const [fps, setFps] = useState<number>(33);
   const [fpsInput, setFpsInput] = useState<string>("33");
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const animationRef = useRef<number | null>(null);
   const countRef = useRef<number>(0);
+
+  const formatWithCommas = (value: string): string => {
+    const num = value.replace(/,/g, "").replace(/\D/g, "");
+    if (!num) return "";
+    return parseInt(num, 10).toLocaleString();
+  };
+
+  const handleTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, "");
+    if (raw === "" || /^\d+$/.test(raw)) {
+      setTargetNumber(raw);
+      setDisplayValue(formatWithCommas(raw));
+    }
+  };
 
   const handleFpsChange = (value: string) => {
     setFpsInput(value);
@@ -27,9 +43,13 @@ const Counter = () => {
     if (isNaN(target) || target <= 0) return;
 
     setIsRunning(true);
+    setIsPaused(false);
     setIsComplete(false);
-    countRef.current = 0;
-    setCurrentCount(0);
+    
+    // Only reset if not resuming from pause
+    if (countRef.current === 0) {
+      setCurrentCount(0);
+    }
 
     const frameInterval = 1000 / fps;
     let lastFrameTime = performance.now();
@@ -56,20 +76,26 @@ const Counter = () => {
     animationRef.current = requestAnimationFrame(animate);
   }, [targetNumber, fps]);
 
-  const stopCounting = useCallback(() => {
+  const pauseCounting = useCallback(() => {
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     }
     setIsRunning(false);
+    setIsPaused(true);
   }, []);
 
   const resetCounter = useCallback(() => {
-    stopCounting();
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+    setIsRunning(false);
+    setIsPaused(false);
     setCurrentCount(0);
     setIsComplete(false);
     countRef.current = 0;
-  }, [stopCounting]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -109,13 +135,12 @@ const Counter = () => {
       {/* Controls - simplified */}
       <div className="flex flex-col items-center gap-6 w-full max-w-sm">
         <Input
-          type="number"
-          value={targetNumber}
-          onChange={(e) => setTargetNumber(e.target.value)}
+          type="text"
+          value={displayValue}
+          onChange={handleTargetChange}
           placeholder="Type a number..."
-          disabled={isRunning}
+          disabled={isRunning || isPaused}
           className="text-center text-2xl h-16 bg-input border-border input-glow transition-shadow duration-300"
-          min="1"
         />
 
         <div className="flex gap-3">
@@ -127,17 +152,17 @@ const Counter = () => {
               disabled={!targetNumber || parseInt(targetNumber) <= 0}
             >
               <Play className="w-6 h-6" />
-              Go!
+              {isPaused ? "Resume" : "Go!"}
             </Button>
           ) : (
             <Button
-              onClick={stopCounting}
+              onClick={pauseCounting}
               size="lg"
               variant="secondary"
               className="gap-2 px-10 h-14 text-xl font-bold"
             >
-              <Square className="w-6 h-6" />
-              Stop
+              <Pause className="w-6 h-6" />
+              Pause
             </Button>
           )}
           
@@ -146,7 +171,7 @@ const Counter = () => {
             size="lg"
             variant="outline"
             className="h-14 px-6"
-            disabled={isRunning && currentCount === 0}
+            disabled={currentCount === 0 && !isPaused}
           >
             <RotateCcw className="w-6 h-6" />
           </Button>
