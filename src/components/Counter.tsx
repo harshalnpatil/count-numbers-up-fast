@@ -2,6 +2,12 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Play, Pause, RotateCcw, Settings, ChevronDown } from "lucide-react";
+import {
+  formatNumber,
+  formatWithCommas,
+  isCountableTarget,
+  parseFpsInput,
+} from "@/lib/counter-utils";
 
 const Counter = () => {
   const [targetNumber, setTargetNumber] = useState<string>("100");
@@ -16,12 +22,6 @@ const Counter = () => {
   const animationRef = useRef<number | null>(null);
   const countRef = useRef<number>(0);
 
-  const formatWithCommas = (value: string): string => {
-    const num = value.replace(/,/g, "").replace(/\D/g, "");
-    if (!num) return "";
-    return parseInt(num, 10).toLocaleString();
-  };
-
   const handleTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, "");
     if (raw === "" || /^\d+$/.test(raw)) {
@@ -32,15 +32,15 @@ const Counter = () => {
 
   const handleFpsChange = (value: string) => {
     setFpsInput(value);
-    const parsed = parseInt(value, 10);
-    if (!isNaN(parsed) && parsed >= 1 && parsed <= 120) {
+    const parsed = parseFpsInput(value);
+    if (parsed !== undefined) {
       setFps(parsed);
     }
   };
 
   const startCounting = useCallback(() => {
+    if (!isCountableTarget(targetNumber)) return;
     const target = parseInt(targetNumber, 10);
-    if (isNaN(target) || target <= 0) return;
 
     setIsRunning(true);
     setIsPaused(false);
@@ -105,10 +105,6 @@ const Counter = () => {
     };
   }, []);
 
-  const formatNumber = (num: number): string => {
-    return num.toLocaleString();
-  };
-
   return (
     <div className="flex flex-col items-center justify-start min-h-[100dvh] p-4 pt-8 md:pt-0 md:justify-center gap-4 md:gap-10">
       {/* Header - simplified */}
@@ -158,7 +154,7 @@ const Counter = () => {
           {!isRunning ? (
             <button
               onClick={startCounting}
-              disabled={!targetNumber || parseInt(targetNumber) <= 0}
+              disabled={!isCountableTarget(targetNumber)}
               className="flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-32 md:h-32 rounded-full bg-green-500 hover:bg-green-400 active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed border-4 border-green-300"
             >
               <Play className="w-10 h-10 md:w-14 md:h-14 text-white fill-white" />
