@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 2026-10-17 - Agent setup and verification
+
+- Added explicit frontend/config typecheck and documented locked npm setup separately from Vite bundling.
+- Verification: typecheck passed.
+
 ## [Unreleased]
 
 ### Added

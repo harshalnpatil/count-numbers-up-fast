@@ -12,7 +12,7 @@ A small web app with an animated counter that counts up to a target number. You 
 ## Run locally
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -41,3 +41,9 @@ Unit tests use **Vitest** and **Testing Library**. `npm run test:coverage` print
 ## License
 
 This project is licensed under the **GNU General Public License v3.0 or later** — see the [LICENSE](LICENSE) file.
+
+## Local type verification
+
+Run `npm run typecheck` from this repository root before handing off TypeScript changes. It checks the existing application and build configuration without emitting JavaScript. `npm run build` bundles with Vite and does not perform this type check.
+
+Use `npm ci` for repeatable setup with the committed npm lockfile. This replaces the current checkout's dependency directory; run it inside the intended worktree.
